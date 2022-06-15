@@ -32,13 +32,18 @@ public class PostRepository implements IPostRepository {
     }
 
     public Post save(Post post) {
+        if(post.getId() != 0) {
+            if (!posts.containsKey(post.getId())) {
+                throw new NotFoundException();
+            } else {
+                posts.put(post.getId(), post);
+            }
+        }
+
         if (post.getId() == 0) {
-            long id = idCounter.incrementAndGet();
-            post.setId(id);
-            posts.put(id, post);
-        } else if (post.getId() != 0) {
-            Long currentId = post.getId();
-            posts.put(currentId, post);
+            var newId = idCounter.incrementAndGet();
+            post.setId(newId);
+            posts.put(post.getId(), post);
         }
         return post;
     }
